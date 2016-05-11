@@ -5,8 +5,12 @@
     "hyperdrive": "^5.0.0",
     "hyperkv": "^1.7.0",
     "hyperlog": "^4.10.0",
+    "hyperlog-sodium": "^2.0.0",
     "level": "^1.4.0",
     "level-browserify": "^1.1.0",
+    "signalhub": "^4.3.2",
+    "split2": "^2.0.1",
+    "through2": "^2.0.1",
     "webrtc-swarm": "^2.4.0"
   }
 }

@@ -1,5 +1,7 @@
 the disintermediated web
 
+https://substack.neocities.com
+
 ---
 # the web
 
@@ -134,6 +136,8 @@ architectures for services that nobody can own:
 
 append-only log is the source of truth
 
+indexes (materialized views) are built on top of the log
+
 ---
 # some node/browser primitives
 
@@ -145,10 +149,129 @@ append-only log is the source of truth
 * ipfs
 
 ---
+# randomized gossip protocol
+
+* connect to random peers interested in the same topic
+* replicate data
+
+(easy to build with webrtc-swarm)
+
+---
+# p2p feed publisher
+
+first, some modules...
+
+```
+var swarm = require('webrtc-swarm')
+var signalhub = require('signalhub')
+var memdb = require('memdb')
+var sodium = require('chloride/browser')
+var hsodium = require('hyperlog-sodium')
+var split = require('split2')
+var through = require('through2')
+```
+---
+# p2p feed publisher
+
+set up the swarm and hyperlog
+
+```
+var keypair = sodium.api.crypto_sign_keypair()
+var log = hyperlog(memdb(), hsodium(sodium, keypair))
+
+var hubs = [ 'https://mafintosh.signalhub.com' ]
+var sw = swarm(signalhub(keypair.publicKey.toString('hex'), hubs))
+
+```
+
+---
+# p2p feed publisher
+
+populate the log
+
+```
+process.stdin.pipe(split()).pipe(through(function (buf, enc, next) {
+  log.append(buf, function (err, node) {
+    if (err) console.error(err)
+    else console.log(node.key)
+  })
+}))
+```
+
+---
+# p2p feed publisher
+
+gossip!
+
+```
+sw.on('peer', function (peer, id) {
+  peer.pipe(log.replicate()).pipe(peer)
+})
+```
+
+---
+# p2p feed subscriber
+
+first, some modules...
+
+```
+var swarm = require('webrtc-swarm')
+var signalhub = require('signalhub')
+var memdb = require('memdb')
+var sodium = require('chloride/browser')
+var hsodium = require('hyperlog-sodium')
+```
+
+---
+# p2p feed subscriber
+
+set up the swarm and hyperlog
+
+```
+var publicKey = process.argv[2]
+var log = hyperlog(memdb(), hsodium(sodium, { publicKey: publicKey }))
+
+var hubs = [ 'https://mafintosh.signalhub.com' ]
+var sw = swarm(signalhub(publicKey, hubs))
+```
+
+---
+# p2p feed subscriber
+
+subscribed!
+
+```
+log.createReadStream({ live: true })
+  .on('data', console.log)
+
+sw.on('peer', function (peer, id) {
+  peer.pipe(log.replicate()).pipe(peer)
+})
+```
+
+---
+# p2p feed
+
+* your followers will help host your data when you are offline
+* aside from the signalhub, direct p2p connections
+
+---
 # demo: p2p irc
+
+https://substack.neocities.org/chatwizard/#nodeconflondon
+
+https://github.com/substack/chatwizard
+
+---
+# demo: osm-p2p
+
+* https://github.com/digidem/dd-map-editor
+* https://github.com/digidem/osm-p2p
 
 ---
 # demo: p2p live streaming
+
+https://github.com/substack/spellcast
 
 ---
 
