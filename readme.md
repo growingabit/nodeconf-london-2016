@@ -1,5 +1,7 @@
 the disintermediated web
 
+[watch the video](https://www.youtube.com/watch?v=6jcQoSraHcw&feature=youtu.be)
+
 https://substack.neocities.com
 
 ---
