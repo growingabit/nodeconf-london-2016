@@ -63,8 +63,7 @@ function fetchComputationLogs(ipfsDag) {
 
 function pollingComputation(computation) {
     var computationId = computation.result.id
-    var interval = null
-    interval = setInterval(function() {
+    setTimeout(function() {
         var computationUrl = `https://api.oraclize.it/api/v1/query/${computationId}/status`
         debug(`pollingComputation ${computationUrl}`)
 
@@ -74,11 +73,12 @@ function pollingComputation(computation) {
                 responseBody += chunk
             })
             response.on('end', function() {
+                debug(`pollingComputation on end\n`, responseBody)
+
                 var computationStatus = JSON.parse(responseBody)
+
                 if (!computationStatus.result.active) {
                     debug(`computation complete!`)
-
-                    clearInterval(interval)
 
                     sw.close()
 
@@ -96,6 +96,7 @@ function pollingComputation(computation) {
                     }
                 } else {
                     debug(`computation still active`)
+                    pollingComputation(computation)
                 }
             })
         }).on('error', function(err) {
