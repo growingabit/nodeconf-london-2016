@@ -70,7 +70,7 @@ function pollingComputation(computation) {
 
         https.get(computationUrl, function(response) {
             response.setEncoding('utf8');
-            var responseBody
+            var responseBody = ''
             response.on('data', function(chunk) {
                 if (typeof chunk === 'string') {
                     responseBody += chunk
