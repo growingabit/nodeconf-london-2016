@@ -65,9 +65,10 @@ function pollingComputation(computation) {
     var computationId = computation.result.id
     var interval = null
     interval = setInterval(function() {
-        debug(`pollingComputation`)
+        var computationUrl = `https://api.oraclize.it/api/v1/query/${computationId}/status`
+        debug(`pollingComputation ${computationUrl}`)
 
-        http.get(`https://api.oraclize.it/api/v1/query/${computationId}/status`, function(response) {
+        http.get(computationUrl, function(response) {
             var responseBody
             response.on('data', function(chunk) {
                 responseBody += chunk
