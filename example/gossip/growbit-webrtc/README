@@ -22,7 +22,7 @@ container's entrypoint exec the following steps
 -- print every line of the computation logs
 - container exit
 
-on the Oraclize side the oracle container act a subscriber
+on the Oraclize side the oracle container act as subscriber
 - start an ipfs daemon
 - pings the publisher over signalhub
 - wake up the webrtc swarm
