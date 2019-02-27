@@ -6,7 +6,7 @@ var hsodium = require('hyperlog-sodium')
 var hyperlog = require('hyperlog')
 var freeice = require('freeice')
 var debug = require('debug')('growbit-publisher')
-var http = require('http')
+var https = require('https')
 
 var ORACLE_DAG = process.env.ORACLE_DAG
 
@@ -47,7 +47,7 @@ function fetchComputationLogs(ipfsDag) {
     var ipfsGatewayUrl = `https://cloudflare-ipfs.com/ipfs/${ipfsDag}`
     debug(`trying to fetch logs from IPFS gateway: ${ipfsGatewayUrl}`)
 
-    http.get(ipfsGatewayUrl, function(response) {
+    https.get(ipfsGatewayUrl, function(response) {
         response.on('data', function(chunk) {
             debug(`chunk: ${data}`)
         })
@@ -68,7 +68,7 @@ function pollingComputation(computation) {
         var computationUrl = `https://api.oraclize.it/api/v1/query/${computationId}/status`
         debug(`pollingComputation ${computationUrl}`)
 
-        http.get(computationUrl, function(response) {
+        https.get(computationUrl, function(response) {
             var responseBody
             response.on('data', function(chunk) {
                 responseBody += chunk
@@ -112,10 +112,11 @@ var oraclizeComputationPayload = JSON.stringify({
     proof_type: 17,
     query: `[computation] ['${ORACLE_DAG}', '${pubKey}']`
 })
-var oraclizeComputation = http.request(
-    'https://api.oraclize.it/api/v1/query/create',
+var oraclizeComputation = https.request(
     {
         method: 'POST',
+        hostname: 'api.oraclize.it',
+        path: '/api/v1/query/create',
         headers: {
             'Content-Type' : 'application/json',
             'Content-Length': Buffer.byteLength(oraclizeComputationPayload)

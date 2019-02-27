@@ -12,7 +12,7 @@ WORKDIR /opt/go-ipfs
 
 RUN ./install.sh
 
-RUN ipfs init --profile server
+RUN ipfs init
 
 WORKDIR /usr/src/app
 

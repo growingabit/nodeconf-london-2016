@@ -15,7 +15,7 @@ cd go-ipfs
 
 ./install.sh
 
-ipfs init --profile server
+ipfs init
 
 ipfs daemon &
 
