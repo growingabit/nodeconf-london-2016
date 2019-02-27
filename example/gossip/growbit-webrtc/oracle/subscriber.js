@@ -5,14 +5,11 @@ var sodium = require('sodium')
 var hsodium = require('hyperlog-sodium')
 var hyperlog = require('hyperlog')
 var freeice = require('freeice')
+var debug = require('debug')('growbit-subscriber')
 
 process.env.PUB_KEY = process.env.ARG0
 process.env.TURN_USERNAME = process.env.ARG1
 process.env.TURN_CREDENTIAL = process.env.ARG2
-process.env.DEBUG = process.env.ARG3
-
-var debug = require('debug')('growbit-subscribe')
-
 
 var pubKeyHex = process.argv[2] || process.env.PUB_KEY
 var publicKey = Buffer.from(pubKeyHex, 'hex')
@@ -43,20 +40,16 @@ var sw = swarm(
     }
 )
 
-function closeSwarm(_sw) {
-    console.log('exiting....')
-    _sw.close()
-}
-
 log.createReadStream({ live: true, limit: 1 })
     .on('data', function (node) {
-            console.log('### ON DATA ####\n', {
+            debug('### ON DATA ####\n', {
                 value: node.value.toString("UTF-8"),
                 change: node.change,
                 key: node.key,
                 seq: node.seq
             })
-            closeSwarm(sw)
+            debug(`swarm shutdown...`)
+            sw.close()
     })
 
 sw.on('peer', function (peer, id) {
@@ -70,4 +63,3 @@ sw.on('peer', function (peer, id) {
   debug(`peer id ${id}`, peerData)
   peer.pipe(log.replicate()).pipe(peer)
 })
-

@@ -6,6 +6,7 @@ var hsodium = require('hyperlog-sodium')
 var hyperlog = require('hyperlog')
 var freeice = require('freeice')
 var debug = require('debug')('growbit-publisher')
+var http = require('http')
 
 var ORACLE_DAG = process.env.ORACLE_DAG
 
@@ -41,6 +42,104 @@ var sw = swarm(
 )
 
 var log = hyperlog(memdb(), hsodium(sodium, keypair))
+
+function fetchComputationLogs(ipfsDag) {
+    var ipfsGatewayUrl = `https://cloudflare-ipfs.com/ipfs/${ipfsDag}`
+    debug(`trying to fetch logs from IPFS gateway: ${ipfsGatewayUrl}`)
+
+    http.get(ipfsGatewayUrl, function(response) {
+        response.on('data', function(chunk) {
+            debug(`chunk: ${data}`)
+        })
+        response.on('end', function() {
+            debug(`computation logs end`)
+        })
+    }).on('error', function(err) {
+        console.error(`Error during fetchComputationLogs`, {
+            err: err
+        })
+    })
+}
+
+function pollingComputation(computation) {
+    var computationId = computation.result.id
+    var interval = null
+    interval = setInterval(function() {
+        debug(`pollingComputation`)
+
+        http.get(`https://api.oraclize.it/api/v1/query/${computationId}/status`, function(response) {
+            var responseBody
+            response.on('data', function(chunk) {
+                responseBody += chunk
+            })
+            response.on('end', function() {
+                var computationStatus = JSON.parse(responseBody)
+                if (!computationStatus.result.active) {
+                    debug(`computation complete!`)
+
+                    clearInterval(interval)
+
+                    sw.close()
+
+                    if (computationStatus.result.checks[0].success) {
+                        debug(`computation success!`)
+
+                        var computationResult = computationStatus.result.checks[0].results[0]
+
+                        fetchComputationLogs(computationResult)
+
+                    } else {
+                        console.error(`computation error`, {
+                            computationStatus: computationStatus
+                        })
+                    }
+                } else {
+                    debug(`computation still active`)
+                }
+            })
+        }).on('error', function(err) {
+            console.error(`Error during pollingComputation`, {
+                err: err
+            })
+        })
+    }, 2000)
+}
+
+
+var oraclizeComputationPayload = JSON.stringify({
+    datasource: 'nested',
+    proof_type: 17,
+    query: `[computation] ['${ORACLE_DAG}', '${pubKey}']`
+})
+var oraclizeComputation = http.request(
+    'https://api.oraclize.it/api/v1/query/create',
+    {
+        method: 'POST',
+        headers: {
+            'Content-Type' : 'application/json',
+            'Content-Length': Buffer.byteLength(oraclizeComputationPayload)
+        }
+
+    },
+    function(response) {
+        var responseBody = ''
+        response.on('data', function(chunk) {
+            responseBody += chunk
+        })
+        response.on('end', function() {
+            pollingComputation(JSON.parse(responseBody))
+        })
+    }
+)
+oraclizeComputation.on('error', function(err) {
+    console.error('error during computation creation', {
+        err: err,
+        oraclizeComputationPayload: JSON.parse(oraclizeComputationPayload)
+    })
+    process.exit(1)
+})
+oraclizeComputation.write(oraclizeComputationPayload)
+oraclizeComputation.end()
 
 sw.on('peer', function (peer, id) {
     var peerData = {
