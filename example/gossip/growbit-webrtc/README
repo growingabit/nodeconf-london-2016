@@ -1,1 +1,40 @@
+Starting from substack samples we are able to communicate over webrtc between two node.js applications.
 
+The publisher application is started using docker-compose locally
+
+docker-compose up
+
+container's entrypoint exec the following steps
+- start an ipfs daemon
+- create a zip containing oracle's source from the oracle directory
+- add the zip to ipfs
+- ask Cloudflare and ipfs.io gateways to cache the zip
+- start the publisher.js script
+-- generate a key pair
+-- using Oraclize query API start a computation based on the zip saved to IPFS
+-- start polling the result of the Oraclize computation
+-- wake up the webrtc swarm
+-- wait for a peer
+-- send a message to the peer
+-- when the computation is done close the swarm
+-- from the results extract an IPFS dag
+-- using the IPFS dag retrieves computation logs
+-- print every line of the computation logs
+- container exit
+
+on the Oraclize side the oracle container act a subscriber
+- start an ipfs daemon
+- pings the publisher over signalhub
+- wake up the webrtc swarm
+- receives a message from the publisher
+- print some logs
+- add logs to IPFS
+- ask Cloudflare and ipfs.io gateways to cache logs
+- print as last stdout the logs ipfs dag
+- container exit
+
+
+This is a PoC of auditable backend design enabling off-chain smart contracts: http://oracles.growbit.xyz
+
+Last but not least publisher.js can also be run in a browser because didn't have any particular deps.
+The only part of the publisher that have to be execute outside the browser is the upload of the oracle zip to IPFS that can be achieved with travis-ci: for every computation is not mandatory upload a brand new oracle to IPFS. 
