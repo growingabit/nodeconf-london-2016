@@ -32,6 +32,10 @@ zip oracle.zip *
 
 ORACLE_DAG=`ipfs add -Q oracle.zip`
 
+cd /usr/src/app
+
+yarn
+
 set +e
 
 curl --output /dev/null --silent --head --fail --retry 5 --silent https://cloudflare-ipfs.com/ipfs/${ORACLE_DAG}
@@ -39,9 +43,5 @@ curl --output /dev/null --silent --head --fail --retry 5 --silent https://cloudf
 curl --output /dev/null --silent --head --fail --retry 5 --silent https://gateway.ipfs.io/ipfs/${ORACLE_DAG}
 
 set -e
-
-cd /usr/src/app
-
-yarn
 
 ORACLE_DAG=$ORACLE_DAG node publisher.js
