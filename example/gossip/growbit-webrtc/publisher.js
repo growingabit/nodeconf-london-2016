@@ -5,7 +5,9 @@ var sodium = require('sodium')
 var hsodium = require('hyperlog-sodium')
 var hyperlog = require('hyperlog')
 var freeice = require('freeice')
-var debug = require('debug')('growbit-publish')
+var debug = require('debug')('growbit-publisher')
+
+var ORACLE_DAG = process.env.ORACLE_DAG
 
 var hubs = [
     'https://signalhub-growbit.herokuapp.com'
