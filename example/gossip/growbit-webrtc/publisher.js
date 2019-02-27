@@ -72,7 +72,9 @@ function pollingComputation(computation) {
             response.setEncoding('utf8');
             var responseBody
             response.on('data', function(chunk) {
-                responseBody += chunk
+                if (typeof chunk === 'string') {
+                    responseBody += chunk
+                }
             })
             response.on('end', function() {
                 debug(`pollingComputation on end\n`, responseBody)
@@ -130,7 +132,9 @@ var oraclizeComputation = https.request(
         response.setEncoding('utf8');
         var responseBody = ''
         response.on('data', function(chunk) {
-            responseBody += chunk
+            if (typeof chunk === 'string') {
+                responseBody += chunk
+            }
         })
         response.on('end', function() {
             pollingComputation(JSON.parse(responseBody))
