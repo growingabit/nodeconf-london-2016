@@ -48,6 +48,7 @@ function fetchComputationLogs(ipfsDag) {
     debug(`trying to fetch logs from IPFS gateway: ${ipfsGatewayUrl}`)
 
     https.get(ipfsGatewayUrl, function(response) {
+        response.setEncoding('utf8');
         response.on('data', function(chunk) {
             debug(`chunk: ${data}`)
         })
@@ -68,6 +69,7 @@ function pollingComputation(computation) {
         debug(`pollingComputation ${computationUrl}`)
 
         https.get(computationUrl, function(response) {
+            response.setEncoding('utf8');
             var responseBody
             response.on('data', function(chunk) {
                 responseBody += chunk
@@ -125,6 +127,7 @@ var oraclizeComputation = https.request(
 
     },
     function(response) {
+        response.setEncoding('utf8');
         var responseBody = ''
         response.on('data', function(chunk) {
             responseBody += chunk
