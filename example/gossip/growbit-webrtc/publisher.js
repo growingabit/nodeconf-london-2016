@@ -50,7 +50,7 @@ function fetchComputationLogs(ipfsDag) {
     https.get(ipfsGatewayUrl, function(response) {
         response.setEncoding('utf8');
         response.on('data', function(chunk) {
-            debug(`chunk: ${data}`)
+            debug(`chunk: ${chunk}`)
         })
         response.on('end', function() {
             debug(`computation logs end`)
@@ -72,9 +72,7 @@ function pollingComputation(computation) {
             response.setEncoding('utf8');
             var responseBody = ''
             response.on('data', function(chunk) {
-                if (typeof chunk === 'string') {
-                    responseBody += chunk
-                }
+                responseBody += chunk
             })
             response.on('end', function() {
                 debug(`pollingComputation on end\n`, responseBody)
@@ -86,7 +84,7 @@ function pollingComputation(computation) {
 
                     sw.close()
 
-                    if (computationStatus.result.checks[0].success) {
+                    if (!computationStatus.result.checks[0].errors) {
                         debug(`computation success!`)
 
                         var computationResult = computationStatus.result.checks[0].results[0]
@@ -132,9 +130,7 @@ var oraclizeComputation = https.request(
         response.setEncoding('utf8');
         var responseBody = ''
         response.on('data', function(chunk) {
-            if (typeof chunk === 'string') {
-                responseBody += chunk
-            }
+            responseBody += chunk
         })
         response.on('end', function() {
             pollingComputation(JSON.parse(responseBody))
@@ -169,6 +165,6 @@ sw.on('peer', function (peer, id) {
                 debug(`log.append node.key(${node.key}) success callback`)
             }
         })
-    }, 2000)
+    }, 10000)
   peer.pipe(log.replicate()).pipe(peer)
 })
