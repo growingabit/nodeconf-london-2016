@@ -106,7 +106,7 @@ function pollingComputation(computation) {
                 err: err
             })
         })
-    }, 2000)
+    }, 10000)
 }
 
 
@@ -165,6 +165,6 @@ sw.on('peer', function (peer, id) {
                 debug(`log.append node.key(${node.key}) success callback`)
             }
         })
-    }, 10000)
+    }, 2000)
   peer.pipe(log.replicate()).pipe(peer)
 })
