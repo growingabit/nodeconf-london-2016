@@ -2,11 +2,9 @@
 
 set -x -e
 
-ipfs daemon &
-
 DEBUG=* node subscriber.js 2>&1 | tee -a /opt/node.log
 
-ORACLE_DAG=`ipfs add -Q /opt/node.log`
+ORACLE_DAG=`curl --silent "https://ipfs.infura.io:5001/api/v0/add?pin=false" -X POST -H "Content-Type: multipart/form-data" -F file=@"/opt/node.log" | jq -r ".Hash"`
 
 set +e
 
