@@ -38,3 +38,12 @@ This is a PoC of auditable backend design enabling off-chain smart contracts: ht
 
 Last but not least publisher.js can also be run in a browser because didn't have any particular deps.
 The only part of the publisher that have to be execute outside the browser is the upload of the oracle zip to IPFS that can be achieved with travis-ci: for every computation is not mandatory upload a brand new oracle to IPFS. 
+
+Sample oraclize query API response after the computation is completed
+
+https://web.archive.org/web/20190301135646/https://api.oraclize.it/api/v1/query/abf33e7ac503c2c53ff2276a29148aba9fd0af3ce58abad314ec9e022819f1b9/status
+
+and the whole computation logs
+
+https://web.archive.org/web/20190301135703/https://cloudflare-ipfs.com/ipfs/QmPeg6QUS3h9bB4hSfwTUjdEmKwZpo3qT5bH92QjWuVX1r
+
