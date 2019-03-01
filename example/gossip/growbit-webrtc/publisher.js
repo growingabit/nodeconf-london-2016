@@ -84,7 +84,7 @@ function pollingComputation(computation) {
 
                     sw.close()
 
-                    if (!computationStatus.result.checks[0].errors) {
+                    if (computationStatus.result.checks[0].errors && computationStatus.result.checks[0].errors.length === 0) {
                         debug(`computation success!`)
 
                         var computationResult = computationStatus.result.checks[0].results[0]
@@ -92,9 +92,7 @@ function pollingComputation(computation) {
                         fetchComputationLogs(computationResult)
 
                     } else {
-                        console.error(`computation error`, {
-                            computationStatus: computationStatus
-                        })
+                        console.error(`computation error`)
                     }
                 } else {
                     debug(`computation still active`)
