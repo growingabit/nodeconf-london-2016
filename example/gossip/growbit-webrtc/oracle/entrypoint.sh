@@ -10,7 +10,7 @@ set +e
 
 curl --output /dev/null --silent --fail --retry 5 --silent https://cloudflare-ipfs.com/ipfs/${ORACLE_DAG}
 
-curl --output /dev/null --silent --fail --retry 5 --silent https://gateway.ipfs.io/ipfs/${ORACLE_DAG}
+# curl --output /dev/null --silent --fail --retry 5 --silent https://gateway.ipfs.io/ipfs/${ORACLE_DAG}
 
 curl --output /dev/null --silent --fail --retry 5 --silent "https://ipfs.infura.io:5001/api/v0/get?arg=${ORACLE_DAG}"
 
