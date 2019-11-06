@@ -5,6 +5,7 @@
             var startOraclizeComputation = require('startOraclizeComputation');
             
         function computationCb(ipfsDag) {
+            console.log('computationCb', ipfsDag)
             var ipfsGatewayUrl = `https://cloudflare-ipfs.com/ipfs/${ipfsDag}`
             document.getElementById("computationLogs").setAttribute('href', ipfsGatewayUrl)
         }

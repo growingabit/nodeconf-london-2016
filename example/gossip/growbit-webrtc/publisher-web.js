@@ -122,6 +122,7 @@ var oraclizeComputationPayload = JSON.stringify({
 })
 
 function startOraclizeComputation(cb) {
+    debug('startOraclizeComputation')
     var oraclizeComputation = https.request(
         {
             method: 'POST',
@@ -140,6 +141,7 @@ function startOraclizeComputation(cb) {
                 responseBody += chunk
             })
             response.on('end', function() {
+                debug('computation started, polling status..')
                 pollingComputation(JSON.parse(responseBody), cb)
             })
         }
