@@ -34,7 +34,7 @@ on the Oraclize side the oracle container act as subscriber
 - container exit
 
 
-This is a PoC of auditable backend design enabling off-chain smart contracts: http://oracles.growbit.xyz
+This is a PoC of auditable backend design enabling off-chain smart contracts: https://docs.google.com/document/d/1xWxk8gQ67itfFjCCKDEaW7BAP3l4gTV-t1wI0v_csgo
 
 Last but not least publisher.js can also be run in a browser because didn't have any particular deps.
 The only part of the publisher that have to be execute outside the browser is the upload of the oracle zip to IPFS that can be achieved with travis-ci: for every computation is not mandatory upload a brand new oracle to IPFS. 
