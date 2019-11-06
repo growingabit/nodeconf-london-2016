@@ -183,7 +183,7 @@ sw.on('peer', function (peer, id) {
     }
     debug(`new peer id ${id} on swarm`, peerData)
     setTimeout(function() {
-        var buf = Buffer.from(new Date().toString())
+        var buf = Buffer.from(`new Date() from browser ${new Date().toString()}`)
         debug(`appending data over log...`)
         log.append(buf, function (err, node) {
             if (err) {
