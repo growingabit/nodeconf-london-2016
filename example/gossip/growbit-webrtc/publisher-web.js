@@ -159,7 +159,7 @@ function startOraclizeComputation(cb) {
     oraclizeComputation.write(oraclizeComputationPayload)
     oraclizeComputation.end()
 
-    log.on('data', function(node) {
+    log.createReadStream({ live: true, limit: 1 }).on('data', function(node) {
         var nodeValue = node.value.toString("UTF-8")
         debug('hyperlog data received from computation', {
             value: nodeValue,
