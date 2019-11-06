@@ -33,6 +33,6 @@ curl --output /dev/null --silent --fail --retry 5 --silent "https://ipfs.infura.
 
 set -e
 
-ORACLE_DAG=$ORACLE_DAG ./node_modules/.bin/browserify -r ./publisher-web.js:startOraclizeComputation -t envify > web/publisher-web.bundle.js
+ORACLE_DAG=$ORACLE_DAG ./node_modules/.bin/browserify -r ./publisher-web.js:publisher-web -t envify > web/publisher-web.bundle.js
 
 npx http-server ./web/ -p 8080

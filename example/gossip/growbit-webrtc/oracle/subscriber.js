@@ -13,7 +13,10 @@ process.env.TURN_CREDENTIAL = process.env.ARG2
 
 var pubKeyHex = process.argv[2] || process.env.PUB_KEY
 var publicKey = Buffer.from(pubKeyHex, 'hex')
-var log = hyperlog(memdb(), hsodium(sodium, { publicKey: publicKey }))
+
+var subscriberKeypair = sodium.api.crypto_sign_keypair()
+
+var log = hyperlog(memdb(), hsodium(sodium, subscriberKeypair, { publicKey: publicKey }))
 
 var hubs = [
     'https://signalhub-growbit.herokuapp.com'
@@ -48,9 +51,18 @@ log.createReadStream({ live: true, limit: 1 })
                 key: node.key,
                 seq: node.seq
             })
-            debug(`swarm shutdown...`)
-            sw.close()
-    })
+            debug(`appending data back over log...`)
+            var buf = Buffer.from(`new Date() from Provable computation ${new Date().toString()}`)
+            log.append(buf, function (err, node) {
+                if (err) {
+                    console.error(`log.append error callback`, err)
+                } else {
+                    debug(`log.append node.key(${node.key}) success callback`)
+                }
+                debug(`swarm shutdown...`)
+                sw.close()
+            })
+   })
 
 sw.on('peer', function (peer, id) {
  var peerData = {
