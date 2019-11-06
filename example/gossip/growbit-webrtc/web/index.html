@@ -1,0 +1,21 @@
+<html>
+    <head>
+        <script src="publisher-web.bundle.js"></script>
+        <script>
+            var startOraclizeComputation = require('startOraclizeComputation');
+            
+        function computationCb(ipfsDag) {
+            var ipfsGatewayUrl = `https://cloudflare-ipfs.com/ipfs/${ipfsDag}`
+            document.getElementById("computationLogs").setAttribute('href', ipfsGatewayUrl)
+        }
+        </script>
+    </head>
+    <body>
+        <h2>WebRTC tunnel through Node.js Provable computation datasource</h2>
+        <p>Open the Chrome console and then...</p>
+        <p><button onclick="startOraclizeComputation(computationCb)">... click HERE</button></p>
+        <p>
+            <a target="_blank" id="computationLogs">COMPUTATION LOGS ON IPFS (available after computation is done)</a>
+        </p>
+    </body>
+</html>

@@ -47,3 +47,13 @@ and the whole computation logs (search for growbit-subscriber inside the logs to
 
 https://web.archive.org/web/20190301135703/https://cloudflare-ipfs.com/ipfs/QmPeg6QUS3h9bB4hSfwTUjdEmKwZpo3qT5bH92QjWuVX1r
 
+
+The above demo use WebRTC to connect two Node.js scripts.
+
+Alternatively you can use WebRTC between a browser and a Node.js computation inside Oraclize/Provable platform.
+
+Using the following docker-compose you can do that.
+
+docker-compose -f docker-compose-web.yml up
+
+When is ready open http://localhost:8080 and follow the white rabbit.

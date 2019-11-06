@@ -1,0 +1,19 @@
+version: '3'
+services:
+    publisher:
+        image: 'node:8'
+        volumes:
+            - ./publisher-web.js:/usr/src/app/publisher-web.js
+            - ./web:/usr/src/app/web
+            - ./package.json:/usr/src/app/package.json
+            - ./entrypoint-web.sh:/opt/entrypoint.sh
+            - ./oracle:/opt/oracle
+            - /usr/src/app/node_modules
+        entrypoint:
+            - /opt/entrypoint.sh
+        environment:
+            - TURN_USERNAME
+            - TURN_CREDENTIAL
+            - DEBUG=growbit-publisher
+        ports:
+            - "8080:8080"
