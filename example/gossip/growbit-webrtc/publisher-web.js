@@ -93,7 +93,7 @@ function pollingComputation(computation, cb) {
 
                         fetchComputationLogs(computationResult)
 
-                        if (cb && typeof cb === 'function') {
+                        if (typeof cb === 'function') {
                             debug('calling module callback')
                             cb(computationResult)
                         }
