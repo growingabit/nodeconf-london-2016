@@ -105,7 +105,7 @@ function pollingComputation(computation, cb) {
                     }
                 } else {
                     debug(`computation still active`)
-                    pollingComputation(computation)
+                    pollingComputation(computation, cb)
                 }
             })
         }).on('error', function(err) {
