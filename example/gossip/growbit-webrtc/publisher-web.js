@@ -12,6 +12,8 @@ var debug = debugg('growbit-publisher')
 debugg.enable('growbit-publisher')
 
 var ORACLE_DAG = process.env.ORACLE_DAG
+var COMPUTATION_RESULT = 'COMPUTATION_RESULT'
+var HYPERLOG_DATA = 'HYPERLOG_DATA'
 
 var hubs = [
     'https://signalhub-growbit.herokuapp.com'
@@ -94,8 +96,8 @@ function pollingComputation(computation, cb) {
                         fetchComputationLogs(computationResult)
 
                         if (typeof cb === 'function') {
-                            debug('calling module callback')
-                            cb(computationResult)
+                            debug('calling module callback for computation result')
+                            cb(COMPUTATION_RESULT, computationResult)
                         }
 
                     } else {
@@ -103,7 +105,7 @@ function pollingComputation(computation, cb) {
                     }
                 } else {
                     debug(`computation still active`)
-                    pollingComputation(computation)
+                    pollingComputation(computation, cb)
                 }
             })
         }).on('error', function(err) {
@@ -156,6 +158,20 @@ function startOraclizeComputation(cb) {
     })
     oraclizeComputation.write(oraclizeComputationPayload)
     oraclizeComputation.end()
+
+    log.createReadStream({ live: true, limit: 1 }).on('data', function(node) {
+        var nodeValue = node.value.toString("UTF-8")
+        debug('hyperlog data received from computation', {
+            value: nodeValue,
+            change: node.change,
+            key: node.key,
+            seq: node.seq
+        })
+        if (typeof cb === 'function') {
+            debug('calling module callback for hyperlog data')
+            cb(HYPERLOG_DATA, nodeValue)
+        }
+    })
 }
 
 sw.on('peer', function (peer, id) {
@@ -180,4 +196,9 @@ sw.on('peer', function (peer, id) {
   peer.pipe(log.replicate()).pipe(peer)
 })
 
-module.exports = startOraclizeComputation
+
+module.exports = {
+    startComputation: (cb) => startOraclizeComputation(cb),
+    COMPUTATION_RESULT,
+    HYPERLOG_DATA
+}

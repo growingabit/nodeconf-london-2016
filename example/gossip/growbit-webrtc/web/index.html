@@ -2,21 +2,44 @@
     <head>
         <script src="publisher-web.bundle.js"></script>
         <script>
-            var startOraclizeComputation = require('startOraclizeComputation');
+            var publisherWeb = require('publisher-web');
             
-        function computationCb(ipfsDag) {
-            console.log('computationCb', ipfsDag)
-            var ipfsGatewayUrl = `https://cloudflare-ipfs.com/ipfs/${ipfsDag}`
-            document.getElementById("computationLogs").setAttribute('href', ipfsGatewayUrl)
-        }
+            function computationCb(messageType, message) {
+                console.log('computationCb', {messageType, message})
+
+                switch(messageType) {
+                    case publisherWeb.COMPUTATION_RESULT:
+                        var ipfsDag = message
+                        var ipfsGatewayUrl = `https://cloudflare-ipfs.com/ipfs/${ipfsDag}`
+                        document.getElementById("computationLogs").setAttribute('href', ipfsGatewayUrl)
+                        break;
+                    case publisherWeb.HYPERLOG_DATA:
+                        var newLI = document.createElement('li');
+                        newLI.appendChild(document.createTextNode(message))
+                        document.getElementById('hyperlogOL').appendChild(newLI)
+                        break;
+                    default:
+                        console.log('computationCb unmanged messageType', {messageType, message})
+                }
+            }
+
+            function start() {
+                publisherWeb.startComputation(computationCb)
+            }
         </script>
     </head>
     <body>
         <h2>WebRTC tunnel through Node.js Provable computation datasource</h2>
         <p>Open the Chrome console and then...</p>
-        <p><button onclick="startOraclizeComputation(computationCb)">... click HERE</button></p>
+        <p><button onclick="start()">... click HERE</button></p>
         <p>
             <a target="_blank" id="computationLogs">COMPUTATION LOGS ON IPFS (available after computation is done)</a>
+        </p>
+        <p>
+            HYPERLOG messages from computation:
+            <br />
+            <ol id="hyperlogOL">
+            </ol>
         </p>
     </body>
 </html>
