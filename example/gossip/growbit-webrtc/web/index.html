@@ -5,8 +5,6 @@
             var publisherWeb = require('publisher-web');
             
             function computationCb(messageType, message) {
-                console.log('computationCb', {messageType, message})
-
                 switch(messageType) {
                     case publisherWeb.COMPUTATION_RESULT:
                         var ipfsDag = message
